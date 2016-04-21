@@ -3,6 +3,8 @@ import {Observable} from 'rx'
 import {add} from 'ramda'
 import {mapTo} from '../utils'
 
+import Audio from './audio';
+
 function intent(DOM, firebase) {
   const clickFrom = (selector) =>
     DOM.select(selector).events("click").map((e) => true).share()
@@ -57,9 +59,14 @@ function view(state$) {
 export default function main(src) {
   const actions = intent(src.DOM, src.firebase)
   const {currentVolume$, firebaseVolumeOut$} = model(actions)
+  const audioSink = Audio({
+    volume$: currentVolume$,
+    audioContext$: src.audioContext$
+  })
   return {
     DOM: view(currentVolume$),
     firebase: firebaseVolumeOut$
-      .map(mapTo('volume'))
+      .map(mapTo('volume')),
+    audioGraph: audioSink.audioGraph
   }
 }
