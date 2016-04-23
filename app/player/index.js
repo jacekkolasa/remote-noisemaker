@@ -1,9 +1,9 @@
 import {div, button, span, br} from '@cycle/dom'
 import {Observable} from 'rx'
-import {add} from 'ramda'
-import {mapTo} from '../utils'
-
-import Audio from './audio';
+import {add, compose, curry} from 'ramda'
+import {mapTo, limit} from '../utils'
+import {volume as volumeExtent} from '../settings'
+import Audio from './audio'
 
 function intent(DOM, firebase) {
   const clickFrom = (selector) =>
@@ -14,6 +14,8 @@ function intent(DOM, firebase) {
     volumeFromFirebase$: firebase.get('volume').share()
   }
 }
+
+const addWithinLimits = compose(limit(volumeExtent), add)
 
 function model(actions) {
   const volumeRelativeChange$ = Observable.merge(
@@ -32,7 +34,7 @@ function model(actions) {
    */
   const volume$ = actions.volumeFromFirebase$
     .map((volume) => volumeRelativeChange$
-      .scan(add, volume)
+      .scan(addWithinLimits, volume)
     ).switch()
     .distinctUntilChanged()
     .share()
@@ -48,7 +50,7 @@ function model(actions) {
 function view(state$) {
   return state$.map((volume) =>
     div([
-      span(`current value: ${volume}`),
+      span(`current volume: ${volume}`),
       br(),
       button('.minus-button', '-'),
       button('.plus-button', '+')
