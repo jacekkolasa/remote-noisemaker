@@ -11,6 +11,7 @@ function intent(DOM, firebase) {
   return {
     minusClick$: clickFrom('.minus-button').map(-1),
     plusClick$: clickFrom('.plus-button').map(1),
+    startStopClick$: clickFrom('.start-stop-button').map(1),
     volumeFromFirebase$: firebase.get('volume').share()
   }
 }
@@ -41,32 +42,41 @@ function model(actions) {
   const currentVolume$ = volume$.startWith(5)
   // filter out first 'onNext' - to not send the same value back to firebase
   const volumeChange$ = volume$.filter((x, i) => i !== 0)
+  const audioToggle$ = actions.startStopClick$
+    .startWith(false)
+    .scan((acc) => !acc)
+  const $state = Observable.combineLatest(
+    currentVolume$, audioToggle$, (volume, audioToggle) => ({volume, audioToggle})
+  )
   return {
-    currentVolume$,
+    $state,
     firebaseVolumeOut$: volumeChange$
   }
 }
 
 function view(state$) {
-  return state$.map((volume) =>
+  return state$.map(({volume, audioToggle}) =>
     div([
       span(`current volume: ${volume}`),
       br(),
       button('.minus-button', '-'),
-      button('.plus-button', '+')
+      button('.plus-button', '+'),
+      br(),
+      br(),
+      button('.start-stop-button', audioToggle ? 'stop' : 'start')
     ])
   )
 }
 
 export default function main(src) {
   const actions = intent(src.DOM, src.firebase)
-  const {currentVolume$, firebaseVolumeOut$} = model(actions)
+  const {$state, firebaseVolumeOut$} = model(actions)
   const audioSink = Audio({
-    volume$: currentVolume$,
+    settings$: $state,
     audioContext$: src.audioContext$
   })
   return {
-    DOM: view(currentVolume$),
+    DOM: view($state),
     firebase: firebaseVolumeOut$
       .map(mapTo('volume')),
     audioGraph: audioSink.audioGraph

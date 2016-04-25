@@ -51,20 +51,22 @@ function getNoiseBuffer(audioContext, volume) {
   return buffer;
 }
 
-export default function main({volume$, audioContext$}) {
+export default function main({settings$, audioContext$}) {
   const graph$ =
-    Observable.combineLatest(audioContext$, volume$, (audioContext, volume) => {
-      const {currentTime} = audioContext
-      const buffer = getNoiseBuffer(audioContext, volume)
-      return {
-        0: ['gain', 'output', {gain: 0.06}],
-        1: ['bufferSource', 'output', {
-          buffer,
-          loop: true,
-          startTime: currentTime,
-          stopTime: currentTime + 1
-        }]
-      }
+    Observable.combineLatest(
+      audioContext$, settings$,
+      (audioContext, {volume, audioToggle}) => {
+        const {currentTime} = audioContext
+        const buffer = getNoiseBuffer(audioContext, volume)
+        return {
+          0: ['gain', 'output', {gain: 0.06}],
+          1: ['bufferSource', 'output', {
+            buffer,
+            loop: true,
+            startTime: currentTime,
+            stopTime: audioToggle ? null : currentTime
+          }]
+        }
     })
   return {
     audioGraph: graph$
