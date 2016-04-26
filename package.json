@@ -29,6 +29,7 @@
   "dependencies": {
     "@cycle/core": "^6.0.3",
     "@cycle/dom": "^9.4.0",
+    "@cycle/isolate": "^1.2.0",
     "cycle-firebase": "^1.2.0",
     "cycle-audio-graph": "^0.3.1",
     "ramda": "^0.21.0",

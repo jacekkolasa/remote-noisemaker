@@ -7,11 +7,11 @@ import makeAudioGraphDriver from 'cycle-audio-graph'
 
 import Player from './player'
 
-function main(src) {
+function main({DOM, firebase, audioContext$}) {
   const playerSinks = Player({
-    DOM: src.DOM,
-    firebase: src.firebase,
-    audioContext$: src.audioContext$
+    DOM,
+    firebase,
+    audioContext$
   })
   const playerVTree$ = playerSinks.DOM
   const playerFirebase$ = playerSinks.firebase
