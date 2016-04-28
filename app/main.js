@@ -6,12 +6,19 @@ import {makeFirebaseDriver} from 'cycle-firebase'
 import makeAudioGraphDriver from 'cycle-audio-graph'
 
 import Player from './player'
+import Counter from './counter'
 
 function main({DOM, firebase, audioContext$}) {
+  const counterSinks = Counter({
+    DOM
+  })
+  const counterVTree$ = counterSinks.DOM
+  const counterToggle$ = counterSinks.outputAction$
   const playerSinks = Player({
     DOM,
     firebase,
-    audioContext$
+    audioContext$,
+    counterToggle$
   })
   const playerVTree$ = playerSinks.DOM
   const playerFirebase$ = playerSinks.firebase
@@ -19,9 +26,11 @@ function main({DOM, firebase, audioContext$}) {
 
   return {
     DOM: Observable.combineLatest(
-      playerVTree$, (player) =>
+      playerVTree$, counterVTree$,
+      (player, counter) =>
         div('.main', [
-          player
+          player,
+          counter
         ])
     ),
     firebase: Observable.combineLatest(
