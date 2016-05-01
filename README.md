@@ -1,4 +1,4 @@
-# remote-noisemaker
+# remote-noisemaker (work in progress) 
 [http://jacekkolasa.github.io/remote-noisemaker/](http://jacekkolasa.github.io/remote-noisemaker/)
 Quick app to try and test cycle.js library. Backed by Firebase. Plays noise from one browser and let you control it from another. 
 Could be used if your infant have sleeping problems. :)
