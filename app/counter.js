@@ -1,4 +1,4 @@
-import {div, button, span, br} from '@cycle/dom'
+import {div, button, span} from '@cycle/dom'
 import {Observable} from 'rx'
 import {addWithinLimits} from './utils'
 import Potentiometer from './common/potentiometer'
@@ -37,9 +37,9 @@ function view(state$, potentioneterVDom$) {
     state$, potentioneterVDom$,
     ({toggle, value}, potentiometer) =>
       div([
-        button('.counter', `${toggle ? 'stop' : 'start'} fadeout` ),
-        span('.valuee', `${value}`),
-        potentiometer
+        span('.valuee', `current fadeout time: ${value}`),
+        potentiometer,
+        button('.counter', `${toggle ? '(not implemented yet) stop' : 'start'} fadeout` )
       ])
     )
 }

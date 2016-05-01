@@ -1,4 +1,4 @@
-import {div, button, span, br} from '@cycle/dom'
+import {div, button, span} from '@cycle/dom'
 import isolate from '@cycle/isolate'
 import {Observable} from 'rx'
 import {compose, curry, identity} from 'ramda'
@@ -71,9 +71,8 @@ function view(state$, potentiometerVDom$) {
     ({volume, audioToggle}, potentiometer) =>
       div([
         span(`current volume: ${volume}`),
-        br(),
         potentiometer,
-        button('.start-stop-button', `${audioToggle ? 'stop' : 'start'} audio`)
+        button('.start-stop-button', `${audioToggle ? 'stop' : 'play'}`)
       ])
   )
 }

@@ -1,5 +1,5 @@
 import Cycle from '@cycle/core'
-import {div, makeDOMDriver} from '@cycle/dom'
+import {label, h1, h2, p, div, makeDOMDriver} from '@cycle/dom'
 import {Observable} from 'rx'
 import Firebase from 'firebase'
 import {makeFirebaseDriver} from 'cycle-firebase'
@@ -29,7 +29,14 @@ function main({DOM, firebase, audioContext$}) {
       playerVTree$, counterVTree$,
       (player, counter) =>
         div('.main', [
+          h1('Remote Noisemaker'),
+          h2('To help putting the newborn to sleep...'),
+          p(`Start the app on two machines, possible on the cell phone near children's bed
+          and on your computer in the other room. The volume of the noise can be controlled
+          by either of the machines.
+          `),
           player,
+          h2('When the baby is asleep fire a slow fadeout'),
           counter
         ])
     ),
